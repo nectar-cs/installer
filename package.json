@@ -12,6 +12,7 @@
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "flow": "flow",
+    "release": "release-it",
     "flow-typed": "rimraf flow-typed/npm && flow-typed install --overwrite || true",
     "package": "yarn build && electron-builder build --publish never",
     "package-all": "yarn build && electron-builder build -mwl",
@@ -50,6 +51,18 @@
       "prettier --ignore-path .eslintignore --single-quote --write",
       "git add"
     ]
+  },
+  "release-it": {
+    "npm": false,
+    "github": {
+      "release": true,
+      "releaseName": "Release ${version}",
+      "releaseNotes": "test 1 2 3",
+      "preRelease": false,
+      "draft": false,
+      "tokenRef": "PERSONAL_GITHUB_TOKEN",
+      "assets": ["release/*.deb"]
+    }
   },
   "build": {
     "productName": "MOSAIC Installer",
@@ -221,6 +234,7 @@
     "prettier": "^1.19.1",
     "react-test-renderer": "^16.12.0",
     "redux-logger": "^3.0.6",
+    "release-it": "^12.4.3",
     "rimraf": "^3.0.0",
     "sinon": "^7.5.0",
     "spectron": "^9.0.0",
