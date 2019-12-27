@@ -1,0 +1,18 @@
+{
+  "name": "nectar-mosaic-installer",
+  "productName": "MOSAIC Installer",
+  "version": "1.0.0",
+  "description": "MOSAIC Instance Manager",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Nectar Cloud Software",
+    "email": "xavier@codenectar.com",
+    "url": "https://www.codenectar.com"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
