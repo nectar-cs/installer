@@ -6,20 +6,17 @@ import OptionsForm from './OptionsForm';
 import OneOrManyLines from '../../widgets/OneOrManyLines/OneOrManyLines';
 import { Redirect } from 'react-router';
 
-export default class StepDetail extends React.Component<Props> {
+export default class StepDetail extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
     this.state = {
-      isStepReady: false,
-      isVerifying: false,
-      didExecSucceed: false,
-      didSucceed: false,
+      phase: 'idle',
       commands: [],
       output: '',
       verifications: {},
       formBundle: {},
-      isRedirecting: false
+      configOptions: []
     };
     this.stepForLastCmd = null;
     this.runStep = this.runStep.bind(this);
@@ -37,7 +34,7 @@ export default class StepDetail extends React.Component<Props> {
     const newStepName = this.step().name();
     if(oldStepName !== newStepName){
       console.log(`New Step? ${oldStepName} --> ${newStepName}`);
-      this.prepareStep()
+      this.prepareStep();
     }
   }
 
@@ -81,13 +78,13 @@ export default class StepDetail extends React.Component<Props> {
   }
 
   renderOptions() {
-    const options = this.step().produceOptions();
-    const { formBundle } = this.state;
-    if (options.length < 1) return null;
+    if(!this.isStepReady()) return null;
+    const { formBundle, configOptions } = this.state;
+    if (configOptions.length < 1) return null;
 
     return(
       <OptionsForm
-        options={options}
+        options={configOptions}
         notifyFormValueChanged={this.onFormValueChanged}
         {...formBundle}
       />
@@ -115,30 +112,20 @@ export default class StepDetail extends React.Component<Props> {
 
   async runStep(){
     this.stepForLastCmd = this.step().name();
-    const { runningCallback, ranCallback } = this.props;
-    runningCallback();
-    const stepResult = await this.step().run();
-
-    this.setState(s => ({...s,
-      output: stepResult.output,
-      didExecSucceed: stepResult.success
-    }));
-
-    this.setState(s => ({...s, isVerifying: true}));
+    this.setState(s => ({...s, phase: 'running'}));
+    const { output } = await this.step().run();
+    this.setState(s => ({...s, output, phase: 'verifying'}));
     const verifications = await this.step().verify();
-    this.setState(s => ({...s,
-      isVerifying: false,
-      didSucceed: this.step().didSucceed(),
-      verifications
-    }));
-
-    ranCallback();
+    const success = this.step().didSucceed();
+    const phase = success ? "passed" : "failed";
+    this.setState(s => ({...s, phase, verifications}));
   }
 
   renderOutcome(){
     const { output } = this.state;
-    if(!(this.wasRun() || output)) return null;
-    return this.renderOutcomeVer();
+    if(this.wasRun() || output)
+      return this.renderOutcomeVer();
+    else return null;
   }
 
   renderOutcomeVer(){
@@ -172,7 +159,7 @@ export default class StepDetail extends React.Component<Props> {
   buttonText(){
     const { isLast } = this.props;
     if(this.wasRun()){
-      if(this.didSucceed()) {
+      if(this.didPass()) {
         return isLast ? "Finish" : "Next";
       } else return "Try Again";
     } else return this.isRunning() ? "Running" : "Run";
@@ -181,7 +168,7 @@ export default class StepDetail extends React.Component<Props> {
   buttonAction(){
     const { nextCallback, isLast } = this.props;
     if(this.wasRun()){
-      if(this.didSucceed()) {
+      if(this.didPass()) {
         return isLast ? this.initiateRedirect : nextCallback;
       } else return this.runStep;
     } else return this.runStep;
@@ -198,16 +185,18 @@ export default class StepDetail extends React.Component<Props> {
   }
 
   async prepareStep(){
-    this.setState(s => ({...s, isStepReady: false}));
-    await this.step().prepare();
     this.setState(s => ({...s,
-      isStepReady: true,
-      isVerifying: false,
-      commands: this.step().produceCommand(),
+      phase: 'preparing',
       output: '',
       verifications: {},
-      didSucceed: false,
-      didExecSucceed: false,
+    }));
+
+    await this.step().prepare();
+
+    this.setState(s => ({...s,
+      phase: 'ready',
+      configOptions: this.step().produceOptions(),
+      commands: this.step().produceCommand(),
       formBundle: this.step().bundle
     }));
   }
@@ -225,37 +214,45 @@ export default class StepDetail extends React.Component<Props> {
     this.setState(s => ({...s, isRedirecting: true}));
   }
 
+  isStepReady(): boolean{
+    return !['idle', 'preparing'].includes(this.phase());
+  }
+
   isVerifying(): boolean {
-    const { isVerifying } = this.state;
-    return isVerifying;
+    return this.phase() === 'verifying';
   }
 
   isPreparing(): boolean {
-    const { isStepReady } = this.state;
-    return !isStepReady;
+    return this.phase() === 'preparing';
   }
 
   isRunning(): boolean {
-    const { phase } = this.props;
-    return phase === 'running';
+    return this.phase() === 'running';
+  }
+
+  didPass(){
+    return this.phase() === 'passed';
+  }
+
+  didFail(){
+    return this.phase() === 'failed';
   }
 
   wasRun(): boolean {
-    const { phase } = this.props;
-    return phase === 'ran';
-  }
-
-  didSucceed(){
-    const { didSucceed } = this.state;
-    return didSucceed;
+    return this.didPass() || this.didFail();
   }
 
   step(): ConfigStep {
     return this.props.step;
   }
 
+  phase() {
+    const { phase } = this.state;
+    return phase;
+  }
+
   stepOutput(){
-    if(this.wasRun() || this.isRunning()){
+    if(this.wasRun() || this.isVerifying()){
       const { output } = this.state;
       return output;
     }
@@ -264,8 +261,19 @@ export default class StepDetail extends React.Component<Props> {
 
 type Props = {
   step: ConfigStep,
-  runningCallback: void => void,
+  stepIndex: number,
+  isLast: boolean,
   nextCallback: void => void,
-  ranCallback: void => void,
-  phase: 'idle' | 'running' | 'ran',
+}
+
+type State = {
+  phase:
+    'idle' |
+    'preparing' |
+    'ready' |
+    'running' |
+    'verifying' |
+    'passed' |
+    'failed' |
+    'redirecting'
 }

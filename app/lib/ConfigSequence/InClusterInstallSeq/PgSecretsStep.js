@@ -16,15 +16,6 @@ export default class PgSecretsStep extends ConfigStep {
     })
   }
 
-  async performVerifications() {
-    const { keyUser, keyPw } = this.config();
-    return {
-      exists: (await this.verifySecretExists()),
-      userPresent: (await this.verifySecret(keyUser)),
-      passwordPresent: (await this.verifySecret(keyPw))
-    };
-  }
-
   produceCommand(): Array<string> {
     const { secretName, keyUser, keyPw } = this.config();
     let command = `create secret generic ${secretName} `;
@@ -32,6 +23,15 @@ export default class PgSecretsStep extends ConfigStep {
     command += `${this.secretLiteral(keyPw)}`;
     command = this.kmd(command, 'nectar');
     return [command];
+  }
+
+  async performVerifications() {
+    const { keyUser, keyPw } = this.config();
+    return {
+      exists: (await this.verifySecretExists()),
+      userPresent: (await this.verifySecret(keyUser)),
+      passwordPresent: (await this.verifySecret(keyPw))
+    };
   }
 
   produceOptions(): Array<ConfigOption> {
@@ -42,10 +42,7 @@ export default class PgSecretsStep extends ConfigStep {
     ]
   }
 
-  user() { return this.bundle[this.config().keyUser] }
-  password() { return this.bundle[this.config().keyPw] }
   defaults() { return defaults }
   key(){ return "pgSecrets"; }
   store() { return constants }
-
 }

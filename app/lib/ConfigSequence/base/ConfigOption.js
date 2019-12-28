@@ -2,20 +2,22 @@
 
 export default class ConfigOption {
 
-  constructor(kind, key) {
+  constructor(kind, key, choices=[]) {
     this._kind = kind;
     this._key = key;
+    this._choices = choices;
   }
 
   possibilities(){
-    return {};
+    return this._choices;
   }
 
+  title() { return this.key(); }
   key(){ return this._key; }
   kind(){ return this._kind; }
 
-  static select(key){
-    return new ConfigOption(this.LIST, key)
+  static list(key, choices){
+    return new ConfigOption(this.LIST, key, choices)
   }
 
   static free(key){

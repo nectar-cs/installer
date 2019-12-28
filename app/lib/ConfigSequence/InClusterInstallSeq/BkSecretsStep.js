@@ -1,21 +1,24 @@
 import ConfigStep from '../base/ConfigStep';
 import { constants, defaults } from './defaults';
+import ConfigOption from '../base/ConfigOption';
 
 export default class BkSecretsStep extends ConfigStep {
 
-  produceCommand(): Array<string> {
-    let command = `create secret generic ${this.config().secretName} `;
-    command += `${this.secretLiteral(this.config().keySecBase)} `;
-    command += `${this.secretLiteral(this.config().keyAttrEnc)}`;
-    command = this.kmd(command, 'nectar');
-    return [command];
+  async generateInitialBundle(): { string: string } {
+    const { keyAttrEnc, keySecBase } = this.config();
+    return {
+      [keyAttrEnc]: 'abc',
+      [keySecBase]: '123'
+    }
   }
 
-  async generateInitialBundle(): { string: string } {
-    return {
-      [this.config().keyAttrEnc]: 'abc',
-      [this.config().keySecBase]: '123'
-    }
+  produceCommand(): Array<string> {
+    const { keyAttrEnc, keySecBase } = this.config();
+    let command = `create secret generic ${this.config().secretName} `;
+    command += `${this.secretLiteral(keySecBase)} `;
+    command += `${this.secretLiteral(keyAttrEnc)}`;
+    command = this.kmd(command, 'nectar');
+    return [command];
   }
 
   async performVerifications() {
@@ -25,6 +28,14 @@ export default class BkSecretsStep extends ConfigStep {
       secBasePresent: (await this.verifySecret(keyAttrEnc)),
       attrEncPresent: (await this.verifySecret(keySecBase))
     };
+  }
+
+  produceOptions(): Array<ConfigOption> {
+    const { keyAttrEnc, keySecBase } = this.config();
+    return [
+      ConfigOption.free(keySecBase),
+      ConfigOption.free(keyAttrEnc)
+    ]
   }
 
   key() { return "bkSecrets" }

@@ -12,6 +12,13 @@ const defaults = {
       ready: true
     },
     {
+      id: 'uninstall',
+      title: "Uninstall",
+      subtitle: "Purge an instance of MOSAIC from your cluster or on the cloud.",
+      ready: true,
+      redirect: `/configure/uninstall`
+    },
+    {
       id: 'configure',
       title: "Configure",
       subtitle: "Change MOSAIC Resources, Env Variables, and Secrets."
@@ -20,11 +27,6 @@ const defaults = {
       id: 'migrate',
       title: "Migrate",
       subtitle: "Move instances of MOSAIC between clusters and the cloud."
-    },
-    {
-      id: 'uninstall',
-      title: "Uninstall",
-      subtitle: "Purge an instance of MOSAIC from your cluster or on the cloud."
     }
   ]
 };

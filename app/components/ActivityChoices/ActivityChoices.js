@@ -27,9 +27,11 @@ export default class ActivityChoices extends React.Component{
   }
 
   renderRedirect(){
-    const { isSubmitted, selectedId } = this.state;
+    const { isSubmitted } = this.state;
     if(!isSubmitted) return null;
-    return <Redirect to={`/${selectedId}`}/>
+    const section = this.selectedSection();
+    const target = section.redirect || `/${section.id}`;
+    return <Redirect to={target}/>
   }
 
   renderHeader(){
@@ -76,9 +78,9 @@ export default class ActivityChoices extends React.Component{
   }
 
   renderButton(){
-    const { isSubmitted, selectedId } = this.state;
+    const { isSubmitted } = this.state;
     if(isSubmitted) return null;
-    const bundle = defaults.sections.find(s => s.id === selectedId);
+    const bundle = this.selectedSection();
     const callback = () =>  this.setState(s => ({...s, isSubmitted: true}));
     const text = bundle.ready ? "Begin" : "Coming Soon";
 
@@ -89,5 +91,10 @@ export default class ActivityChoices extends React.Component{
         isEnabled={!!bundle.ready}
       />
     )
+  }
+
+  selectedSection(){
+    const { selectedId } = this.state;
+    return defaults.sections.find(s => s.id === selectedId);
   }
 }

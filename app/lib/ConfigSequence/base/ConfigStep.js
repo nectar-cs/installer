@@ -1,6 +1,7 @@
 //@flow
 import { exec } from 'child_process';
 import ConfigOption from './ConfigOption';
+import Utils from '../../../utils/Utils';
 
 
 export default class ConfigStep {
@@ -129,12 +130,24 @@ export default class ConfigStep {
   async verifySecret(field){
     const cmd = this.jKmd(`get secret ${this.config().secretName}`, "nectar");
     const secret = (await this.jExecute(cmd)) || {};
-    return !!secret['data'][field];
+    return Utils.tor(_ => !!(secret['data'][field]));
   }
 
-  key() { return null; }
-  defaults() { return null }
-  store() { return null }
+  async verifyResCount(resName, count){
+    const res = await this.jExecute(this.jKmd(`get ${resName}`, "nectar"));
+    return res.length === count;
+  }
+
+  async verifyResPres(resName, exp, ns='nectar'){
+    const cmd = this.jKmd(`get ${resName}`, ns);
+    const resList = await this.jExecute(cmd);
+    return !!resList.find(r => r.metadata.name === exp);
+  }
+
+  async verifyResGone(resName, exp, ns){
+    const isPresent = await this.verifyResPres(resName, exp, ns);
+    return !isPresent;
+  }
 
   config() {
     return {
@@ -142,6 +155,10 @@ export default class ConfigStep {
       ...this.store()[this.key()],
     }
   }
+
+  key() { return null; }
+  defaults() { return null }
+  store() { return null }
 }
 
 async function executeCommand(cmd){

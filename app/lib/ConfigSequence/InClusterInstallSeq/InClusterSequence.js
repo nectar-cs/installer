@@ -3,6 +3,7 @@ import ConfigStep from '../base/ConfigStep';
 import ApplyManifestStep from './ApplyManifestStep';
 import PgSecretsStep from './PgSecretsStep';
 import BkSecretsStep from './BkSecretsStep';
+import SetContextStep from '../Common/SetContextStep';
 
 export default class InClusterSequence extends ConfigSequence {
 
@@ -14,8 +15,9 @@ export default class InClusterSequence extends ConfigSequence {
 
   steps(): Array<ConfigStep> {
     return [
-      // new ApplyManifestStep(),
-      // new PgSecretsStep(),
+      new SetContextStep(),
+      new ApplyManifestStep(),
+      new PgSecretsStep(),
       new BkSecretsStep()
     ]
   }

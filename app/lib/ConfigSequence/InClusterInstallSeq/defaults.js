@@ -1,6 +1,6 @@
 export const constants = {
   applyManifest: {
-    rbName: "nectar-cluster-wide-role",
+    crName: "nectar-cluster-wide-role",
     crbName: "nectar-permissions"
   },
   pgSecrets: {
@@ -18,6 +18,17 @@ export const constants = {
 const { applyManifest: am, pgSecrets: pg, bkSecrets: bk } = constants;
 
 export const defaults = {
+
+  setContext: {
+    name: "Set Context",
+    summary: [
+      "Select a context from your kube config",
+      "This will change the context system-wide, so you should change it back later."
+    ],
+    verifications: {
+      contextChanged: "Context now selected value"
+    }
+  },
 
   applyManifest: {
     name: "Apply Manifest",

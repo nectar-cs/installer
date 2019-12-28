@@ -20,14 +20,18 @@ class OptionsFormClass extends React.Component<Props> {
 
   renderFree(option: ConfigOption){
     return this.props.makeInput(
-      option.key(),
+      option.title(),
       option.key(),
       option.key()
     )
   }
 
   renderSelect(option: ConfigOption){
-    return <p>can't do this lol</p>;
+    return this.props.makeSelect(
+      option.title(),
+      option.key(),
+      option.possibilities()
+    )
   }
 }
 
