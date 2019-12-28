@@ -177,7 +177,7 @@ export default class StepDetail extends React.Component<Props, State> {
   renderButton(){
     return(
       <ModalButton
-        isEnabled={!this.isRunning()}
+        isEnabled={!this.isRunning() && !this.isVerifying()}
         title={this.buttonText()}
         callback={this.buttonAction()}
       />
