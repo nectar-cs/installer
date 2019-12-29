@@ -1,6 +1,6 @@
 //@flow
 import React, {Fragment} from 'react'
-import { Layout } from '@nectar-cs/js-common';
+import { Layout } from 'nectar-cs-js-common';
 import StepListView from './StepListView';
 import StepDetail from './StepDetail';
 import Helper from './Helper';

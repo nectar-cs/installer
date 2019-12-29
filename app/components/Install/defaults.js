@@ -1,31 +1,51 @@
+
+const localWebSummary = "The most secure option. Everything runs in your cluster " +
+  "and you can only access the app via port-forward. Lacks desktop features like " +
+  "live code syncing.";
+
+const cloudWebSummary = "A.k.a the SaaS way, the easiest option. We help you create " +
+  "a ServiceAccount in your cluster, you give us the token, and our remote backends " +
+  "authenticate into your cluster. Users authenticate and consume the web app at " +
+  "app.codenectar.com/mosaic";
+
+const localDesktopSummary = "Identical to the first option, but the app is now a " +
+  "desktop application. It has extra features, notably live code syncing between your" +
+  "computer and cluster.";
+
+const cloudDesktopSummary = "Identical to the second option except the app is now " +
+  " a desktop application";
+
 const localWebComps = {
   frontend: {
     location: "in-cluster",
     storage: "no",
-    openness: "closed"
+    openness: "closed",
+    deployment: "frontend"
   },
   kapi: {
     location: "in-cluster",
     storage: "no",
-    openness: "closed"
+    openness: "closed",
+    deployment: "kapi, dind"
   },
   backend: {
     location: "in-cluster",
     storage: "yes",
-    openness: "closed"
+    openness: "closed",
+    deployment: "backend, postgres"
   }
 };
 
 const cloudWebComps = {
   ...localWebComps,
-  frontend: { ...localWebComps.frontend, location: 'cloud' },
-  kapi: { ...localWebComps.kapi, location: 'cloud' },
-  backend: { ...localWebComps.backend, location: 'cloud' },
+  frontend: { ...localWebComps.frontend, location: 'cloud', deployment: 'none' },
+  kapi: { ...localWebComps.kapi, location: 'cloud', deployment: 'none' },
+  backend: { ...localWebComps.backend, location: 'cloud', deployment: 'none' },
 };
 
 const localDesktopComps = {
   ...localWebComps,
-  frontend: { ...localWebComps.frontend, location: 'desktop' },
+  frontend: { ...localWebComps.frontend, location: 'desktop', deployment: 'none' },
 };
 
 const cloudDesktopComps = {
@@ -39,12 +59,10 @@ function frontendTitle(bundle){
 }
 
 function frontendDetail(bundle){
-  let base = "The dashboard you interact with. " +
-    "Communicates with Backend and Secondary Backend";
+  let base = "The dashboard you interact with. ";
   if(bundle.location === 'in-cluster'){
     base += "Runs in your web browser, deployment lives in your cluster," +
-      " accessible via port-forward, " +
-      "e.g localhost:9000/workspaces"
+      " accessible via port-forward, e.g localhost:9000/mosaic."
   }
   else if(bundle.location === 'desktop'){
     base += "A standalone desktop app for Linux and Mac." +
@@ -60,9 +78,10 @@ function frontendDetail(bundle){
 
 function kapiDetail(bundle){
   let base = "Python server for all Kubernetes logic. Does not store data" +
-    ", receives DockerHub/GCR creds from frontend.";
+    ", receives DockerHub/GCR creds from frontend. ";
   if(bundle.location === 'in-cluster'){
-    base += "Deployment lives in your cluster.";
+    base += "Deployment lives in your cluster, along with dind " +
+      "(docker-in-docker image used to build your git images inside your cluster).";
   }
   return base;
 }
@@ -71,7 +90,7 @@ function backendDetail(bundle){
   let base = "Rails server for database logic and Git/Docker remotes interfacing";
   if(bundle.location === 'in-cluster'){
     base += ". Deployment lives in your cluster, along with postgres deployment " +
-      "created during the setup phase"
+      "created during the setup phase."
   }
   return base;
 }
@@ -90,11 +109,11 @@ const defaults = {
         detail: bundle => frontendDetail(bundle)
       },
       kapi: {
-        title: _ => "Backend",
+        title: _ => "K8s Logic Backend",
         detail: bundle => kapiDetail(bundle)
       },
       backend: {
-        title: _ =>  "Secondary Backend",
+        title: _ =>  "Business Logic Backend",
         detail: bundle => backendDetail(bundle)
       }
     }
@@ -102,8 +121,8 @@ const defaults = {
 
   components: [
     { key: 'frontend', title: "Frontend/Desktop" } ,
-    { key: 'kapi', title: "Primary Backend" },
-    { key: 'backend', title: "Secondary Backend" }
+    { key: 'kapi', title: "K8s Logic Backend" },
+    { key: 'backend', title: "Business Logic Backend" }
   ],
 
   flavors: [
@@ -113,6 +132,7 @@ const defaults = {
       title: "Your Cluster - Web",
       subtitle: "You host everything, port-forward to the MOSAIC web app.",
       components: localWebComps,
+      summary: localWebSummary,
       ready: true
     },
     {
@@ -120,21 +140,24 @@ const defaults = {
       icon: "web",
       title: "Cloud - Web",
       subtitle: "We host everything, app at app.codenectar.com",
-      components: cloudWebComps
+      components: cloudWebComps,
+      summary: cloudWebSummary
     },
     {
       id: "local-desktop",
       icon: "computer",
       title: "Your Cluster - Desktop",
       subtitle: "You host everything, use the MOSAIC desktop application.",
-      components: localDesktopComps
+      components: localDesktopComps,
+      summary: localDesktopSummary
     },
     {
       id: "cloud-desktop",
       title: "Cloud - Desktop",
       icon: "computer",
       subtitle: "We host the backend, use the MOSAIC desktop application.",
-      components: cloudDesktopComps
+      components: cloudDesktopComps,
+      summary: cloudDesktopSummary
     }
   ]
 };

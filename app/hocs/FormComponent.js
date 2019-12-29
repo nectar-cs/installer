@@ -1,6 +1,6 @@
 //@flow
 import React from "react";
-import {In, TagPool} from "@nectar-cs/js-common";
+import {In, TagPool} from "nectar-cs-js-common";
 
 export default class FormComponent {
   static compose(InnerComponent)  {

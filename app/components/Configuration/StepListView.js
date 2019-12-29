@@ -1,7 +1,7 @@
 //@flow
 import React, {Fragment} from 'react'
 import ConfigSequence from '../../lib/ConfigSequence/base/ConfigSequence';
-import { EasyListItem, Layout, LeftHeader, TextOverLineSubtitle } from '@nectar-cs/js-common';
+import { EasyListItem, Layout, LeftHeader, TextOverLineSubtitle } from 'nectar-cs-js-common';
 
 export default class StepListView extends React.Component<Props>{
   render(){

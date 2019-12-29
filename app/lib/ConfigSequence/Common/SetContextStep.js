@@ -10,6 +10,12 @@ export default class SetContextStep extends ConfigStep{
     return [`kubectl config use-context ${context}`];
   }
 
+  validate(): Array<string> {
+    const errors = [];
+    super.validatePresence(errors, this.keyContext());
+    return errors;
+  }
+
   async performVerifications() {
     const newConfig = await this.jExecute(this.jKmd("config view"));
     const expected = this.bundle[this.keyContext()];

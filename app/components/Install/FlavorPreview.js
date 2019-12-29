@@ -1,7 +1,7 @@
 //@flow
 import React, {Fragment} from 'react'
 import defaults from './defaults';
-import { Layout, LeftHeader, ModalButton, Tables, TextOverLineSubtitle } from '@nectar-cs/js-common';
+import { Text, Layout, LeftHeader, ModalButton, Tables, TextOverLineSubtitle } from 'nectar-cs-js-common';
 
 export default class FlavorPreview extends React.Component<Props>{
 
@@ -9,6 +9,7 @@ export default class FlavorPreview extends React.Component<Props>{
     return(
       <Fragment>
         { this.renderHeader() }
+        { this.renderOverview() }
         { this.renderExplanation() }
         { this.renderTable() }
         { this.renderButton() }
@@ -24,8 +25,18 @@ export default class FlavorPreview extends React.Component<Props>{
         graphicName={icon}
         graphicType='icon'
         title={`Flavor Preview: ${title}`}
-        subtitle='What a do'
+        subtitle='This is how things will look with this flavor.'
       />
+    )
+  }
+
+  renderOverview(){
+    const { summary } = this.flavorBundle();
+    return(
+      <Layout.Div>
+        <TextOverLineSubtitle text='Overview'/>
+        <Text.P2>{summary}</Text.P2>
+      </Layout.Div>
     )
   }
 
@@ -37,10 +48,10 @@ export default class FlavorPreview extends React.Component<Props>{
       const bundle = components[compKey];
       return(
         <Layout.Div top={2} key={compKey}>
-          <p>
+          <Text.P2>
             <b>{text[compKey].title(bundle)}. </b>
             {text[compKey].detail(bundle)}
-          </p>
+          </Text.P2>
         </Layout.Div>
       )
     });
@@ -99,6 +110,7 @@ function CompHeader(){
   return(
     <tr>
       <th><p>Component</p></th>
+      <th><p>Deployments In Your Cluster</p></th>
       <th><p>Location</p></th>
       <th><p>Stores Data</p></th>
     </tr>
@@ -106,13 +118,14 @@ function CompHeader(){
 }
 
 function CompRow(props){
-  const { comp, name, storage } = props;
+  const { comp, name } = props;
 
   return(
     <tr>
-      <td><p>{name}</p></td>
-      <td><p>{comp.location}</p></td>
-      <td><p>{comp.storage}</p></td>
+      <td><Text.P2>{name}</Text.P2></td>
+      <td><Text.P2>{comp.deployment}</Text.P2></td>
+      <td><Text.P2>{comp.location}</Text.P2></td>
+      <td><Text.P2>{comp.storage}</Text.P2></td>
     </tr>
   )
 }

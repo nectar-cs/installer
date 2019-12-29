@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@nectar-cs/js-common';
+import { Text } from 'nectar-cs-js-common';
 
 export default function OneOrManyLines({text, el, ...props}: Props){
   const TextElement = el || Text.P2;

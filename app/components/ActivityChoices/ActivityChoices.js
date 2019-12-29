@@ -1,6 +1,6 @@
 //@flow
 import React from 'react'
-import { Layout, LeftHeader, ModalButton, Text } from '@nectar-cs/js-common';
+import { Layout, LeftHeader, ModalButton, Text } from 'nectar-cs-js-common';
 import S from './ActivityChoicesStyles'
 import defaults from './defaults';
 import { Redirect } from 'react-router';

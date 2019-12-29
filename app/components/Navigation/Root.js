@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { hot } from 'react-hot-loader/root';
 import type { Store } from '../../reducers/types';
-import { theme, MosaicBaseStyle } from '@nectar-cs/js-common';
+import { theme, MosaicBaseStyle } from 'nectar-cs-js-common';
 import { ThemeProvider } from 'styled-components';
 import { Route, Switch } from 'react-router';
 import ActivityChoices from '../ActivityChoices/ActivityChoices';

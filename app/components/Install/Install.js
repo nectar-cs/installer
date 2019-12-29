@@ -1,6 +1,6 @@
 //@flow
 import React, {Fragment} from 'react'
-import { Layout } from '@nectar-cs/js-common';
+import { Layout } from 'nectar-cs-js-common';
 import FlavorsList from './FlavorsList';
 import FlavorPreview from './FlavorPreview';
 import defaults from './defaults';

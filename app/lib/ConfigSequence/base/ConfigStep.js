@@ -27,6 +27,20 @@ export default class ConfigStep {
     this.bundle = {...this.bundle, ...bundle};
   }
 
+  validate(): Array<string>{
+    return [];
+  }
+
+  validatePresence(errors, key){
+    if(!this.bundle[key])
+      errors.push(`${key} cannot be blank`);
+  }
+
+  validateLength(errors, key, length){
+    if(this.bundle[key] && this.bundle[key].length !== length)
+      errors.push(`${key} must have a length of ${length}`);
+  }
+
   async verify() {
     this.verifications = await this.performVerifications();
     return this.verifications;

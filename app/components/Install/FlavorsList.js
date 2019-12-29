@@ -1,7 +1,7 @@
 //@flow
 import React, {Fragment} from 'react'
 import defaults from './defaults';
-import { EasyListItem, LeftHeader, Text } from '@nectar-cs/js-common';
+import { EasyListItem, LeftHeader, Text } from 'nectar-cs-js-common';
 
 export default class FlavorsList extends React.Component{
 

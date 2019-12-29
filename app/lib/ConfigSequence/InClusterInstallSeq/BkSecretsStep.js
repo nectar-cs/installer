@@ -1,14 +1,29 @@
 import ConfigStep from '../base/ConfigStep';
 import { constants, defaults } from './defaults';
 import ConfigOption from '../base/ConfigOption';
+import crypto from 'crypto'
 
 export default class BkSecretsStep extends ConfigStep {
+
+  randomString(length){
+    return crypto.randomBytes(length / 2).toString('hex');
+  }
+
+  validate(): Array<string> {
+    const errors = [];
+    const { keyAttrEnc, keySecBase } = this.config();
+    this.validatePresence(errors, keyAttrEnc);
+    this.validatePresence(errors, keySecBase);
+    this.validateLength(errors, keyAttrEnc, 32);
+    this.validateLength(errors, keySecBase, 128);
+    return errors;
+  }
 
   async generateInitialBundle(): { string: string } {
     const { keyAttrEnc, keySecBase } = this.config();
     return {
-      [keyAttrEnc]: 'abc',
-      [keySecBase]: '123'
+      [keyAttrEnc]: this.randomString(32),
+      [keySecBase]: this.randomString(128)
     }
   }
 

@@ -39,7 +39,7 @@ export const defaults = {
     verifications: {
       nsExists: "Namespace nectar exists",
       saExists: "ServiceAccount nectar exists",
-      rbExists: `RoleBinding ${am.rbName} exists`,
+      rbExists: `ClusterRole ${am.crName} exists`,
       crbExists: `ClusterRoleBinding ${am.crbName} exists`,
       depsExist: `5/5 deployments in nectar namespace exist`,
       svcsExist: `5/5 services in nectar namespace exist`
@@ -50,12 +50,12 @@ export const defaults = {
     name: "Create Database Secret",
     summary: [
       "Create a Secrets object for the locally hosted database.",
-      "This is a postgres database. The password below is randomly generated."
+      "This is a postgres database. The password is randomly generated."
     ],
     verifications: {
-      exists: "Secret mosaic-pg now exists",
-      userPresent: `Secret field ${pg.secretName}.${pg.keyUser} is non-empty`,
-      passwordPresent: `Secret field ${pg.secretName}.${pg.keyPw} is non-empty`
+      exists: `Secret ${pg.secretName} now exists`,
+      userPresent: `Secret field ${pg.secretName}.${pg.keyUser} non-empty`,
+      passwordPresent: `Secret field ${pg.secretName}.${pg.keyPw} non-empty`
     }
   },
 
@@ -63,15 +63,14 @@ export const defaults = {
     name: "Create Backend Secret",
     summary: [
       "Create a Secrets object for the locally hosted backend.",
-      "The secret-key-base is the standard crypto key for Rails apps. " +
-      "It's not recommended to keep a copy.",
-      "The attr-encrypt-key is used encrypt/decrypt database values. " +
-      "It's not recommended to keep a copy."
+      "The values below are randomly generated. It is not recommended to make copies.",
+      "The secret-key-base is the standard 128 byte crypto key for Rails apps.",
+      "The attr-encrypt-key is the 32 byte keys for encrypting/decrypting database values.",
     ],
     verifications: {
       exists: `Secret ${bk.secretName} now exists`,
-      attrEncPresent: `Secret field ${bk.secretName}.${bk.keyAttrEnc} is non-empty`,
-      secBasePresent: `Secret field ${bk.secretName}.${bk.keySecBase} is non-empty`
+      attrEncPresent: `Secret field ${bk.secretName}.${bk.keyAttrEnc} non-empty`,
+      secBasePresent: `Secret field ${bk.secretName}.${bk.keySecBase} non-empty`
     }
   }
 };

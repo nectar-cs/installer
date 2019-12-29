@@ -16,6 +16,14 @@ export default class PgSecretsStep extends ConfigStep {
     })
   }
 
+  validate(): Array<string> {
+    const errors = [];
+    const { keyUser, keyPw } = this.config();
+    this.validatePresence(errors, keyUser);
+    this.validatePresence(errors, keyPw);
+    return errors;
+  }
+
   produceCommand(): Array<string> {
     const { secretName, keyUser, keyPw } = this.config();
     let command = `create secret generic ${secretName} `;

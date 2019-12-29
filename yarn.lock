@@ -10086,6 +10086,11 @@ nearley@^2.7.10:
     randexp "0.4.6"
     semver "^5.4.1"
 
+nectar-cs-js-common@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/nectar-cs-js-common/-/nectar-cs-js-common-1.0.1.tgz#593989e7d5659dd35d7b9de053e89a79a854e41a"
+  integrity sha512-rIwn7j3lXku1SVui6Iqzq/zkiygEwUS5zpGioPwxE2ssWRHJqTT5ROy3riNDLK8nYIOFhKLFHHEekLIi+m9ajg==
+
 negotiator@0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"

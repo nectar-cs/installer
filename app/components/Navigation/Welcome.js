@@ -1,7 +1,7 @@
 //@flow
 import React, {Fragment} from  'react'
 import S from './WelcomeStyles'
-import { Layout, Text, Button, ModestLink } from '@nectar-cs/js-common';
+import { Layout, Text, Button, ModestLink } from 'nectar-cs-js-common';
 import Utils from '../../utils/Utils';
 
 export default class Welcome extends React.Component<>{

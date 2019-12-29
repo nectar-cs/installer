@@ -1,6 +1,6 @@
 //@flow
 import React, {Fragment} from 'react'
-import { Checklist, Layout, LeftHeader, Loader, ModalButton, Text, TextOverLineSubtitle } from '@nectar-cs/js-common';
+import { Checklist, Layout, LeftHeader, Loader, ModalButton, Text, TextOverLineSubtitle } from 'nectar-cs-js-common';
 import ConfigStep from '../../lib/ConfigSequence/base/ConfigStep';
 import OptionsForm from './OptionsForm';
 import OneOrManyLines from '../../widgets/OneOrManyLines/OneOrManyLines';
@@ -16,7 +16,8 @@ export default class StepDetail extends React.Component<Props, State> {
       output: '',
       verifications: {},
       formBundle: {},
-      configOptions: []
+      configOptions: [],
+      validationErrors: []
     };
     this.stepForLastCmd = null;
     this.runStep = this.runStep.bind(this);
@@ -32,10 +33,7 @@ export default class StepDetail extends React.Component<Props, State> {
   async componentDidUpdate(prevProps): void {
     const oldStepName = prevProps.step.name();
     const newStepName = this.step().name();
-    if(oldStepName !== newStepName){
-      console.log(`New Step? ${oldStepName} --> ${newStepName}`);
-      this.prepareStep();
-    }
+    if(oldStepName !== newStepName) this.prepareStep();
   }
 
   render(){
@@ -46,6 +44,7 @@ export default class StepDetail extends React.Component<Props, State> {
         { this.renderTopLoader() }
         { this.renderExplanation() }
         { this.renderOptions() }
+        { this.renderErrors() }
         { this.renderTerminal() }
         { this.renderOutcome() }
         { this.renderButton() }
@@ -88,6 +87,19 @@ export default class StepDetail extends React.Component<Props, State> {
         notifyFormValueChanged={this.onFormValueChanged}
         {...formBundle}
       />
+    )
+  }
+
+  renderErrors(){
+    if(!this.isStepReady()) return null;
+    const { validationErrors } = this.state;
+    if(validationErrors.length < 1) return null;
+
+    return(
+      <Layout.Div top={1}>
+        <Text.P2 emotion='warn' weight='bold'>Problems</Text.P2>
+        <OneOrManyLines text={validationErrors}/>
+      </Layout.Div>
     )
   }
 
@@ -162,7 +174,11 @@ export default class StepDetail extends React.Component<Props, State> {
       if(this.didPass()) {
         return isLast ? "Finish" : "Next";
       } else return "Try Again";
-    } else return this.isRunning() ? "Running" : "Run";
+    } else {
+      if(this.isRunning() || this.isVerifying())
+        return "Running";
+      else return this.isValidated() ? "Run" : "Fix Problems";
+    }
   }
 
   buttonAction(){
@@ -175,9 +191,12 @@ export default class StepDetail extends React.Component<Props, State> {
   }
 
   renderButton(){
+    const isNotBusy = !this.isRunning() && !this.isVerifying();
+    const isValid = this.isValidated();
+
     return(
       <ModalButton
-        isEnabled={!this.isRunning() && !this.isVerifying()}
+        isEnabled={isNotBusy && isValid}
         title={this.buttonText()}
         callback={this.buttonAction()}
       />
@@ -189,6 +208,7 @@ export default class StepDetail extends React.Component<Props, State> {
       phase: 'preparing',
       output: '',
       verifications: {},
+      validationErrors: []
     }));
 
     await this.step().prepare();
@@ -197,7 +217,8 @@ export default class StepDetail extends React.Component<Props, State> {
       phase: 'ready',
       configOptions: this.step().produceOptions(),
       commands: this.step().produceCommand(),
-      formBundle: this.step().bundle
+      formBundle: this.step().bundle,
+      validationErrors: this.step().validate()
     }));
   }
 
@@ -207,6 +228,7 @@ export default class StepDetail extends React.Component<Props, State> {
       ...s,
       formBundle: {...s.formBundle, [key]: value},
       commands: this.step().produceCommand(),
+      validationErrors: this.step().validate()
     }));
   }
 
@@ -214,8 +236,13 @@ export default class StepDetail extends React.Component<Props, State> {
     this.setState(s => ({...s, isRedirecting: true}));
   }
 
+  isValidated(){
+    const { validationErrors } = this.state;
+    return validationErrors.length === 0;
+  }
+
   isStepReady(): boolean{
-    return !['idle', 'preparing'].includes(this.phase());
+    return this.phase() === 'ready';
   }
 
   isVerifying(): boolean {
@@ -275,5 +302,6 @@ type State = {
     'verifying' |
     'passed' |
     'failed' |
-    'redirecting'
+    'redirecting',
+  validationErrors: true
 }
