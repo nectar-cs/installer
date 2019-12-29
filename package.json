@@ -1,7 +1,7 @@
 {
-  "name": "nectar-mosaic-installer",
-  "productName": "MOSAIC Installer",
-  "version": "1.0.0",
+  "name": "nectar-mosaic-manager",
+  "productName": "MOSAIC Manager",
+  "version": "1.0.9",
   "description": "MOSAIC Instance Manager",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -52,8 +52,8 @@
     ]
   },
   "build": {
-    "productName": "MOSAIC Installer",
-    "appId": "org.nectar.MOSAIC_Installer",
+    "productName": "MOSAIC Manager",
+    "appId": "com.nectar-cs.MOSAIC-Manager",
     "files": [
       "dist/",
       "node_modules/",
@@ -95,7 +95,7 @@
     "publish": {
       "provider": "github",
       "owner": "nectar-cs",
-      "repo": "mosaic",
+      "repo": "installer",
       "private": false
     }
   },
@@ -253,7 +253,7 @@
     "electron-log": "^4.0.0",
     "electron-updater": "^4.2.0",
     "history": "^4.10.1",
-    "nectar-cs-js-common": "^1.0.0",
+    "nectar-cs-js-common": "latest",
     "react": "^16.12.0",
     "react-animations": "^1.0.0",
     "react-dom": "^16.12.0",

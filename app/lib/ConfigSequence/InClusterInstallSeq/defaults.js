@@ -1,7 +1,8 @@
 export const constants = {
   applyManifest: {
     crName: "nectar-cluster-wide-role",
-    crbName: "nectar-permissions"
+    crbName: "nectar-permissions",
+    yamlUrl: "https://raw.githubusercontent.com/nectar-cs/mosaic/master/manifest.yaml"
   },
   pgSecrets: {
     secretName: "mosaic-pg",

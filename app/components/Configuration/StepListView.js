@@ -40,7 +40,7 @@ export default class StepListView extends React.Component<Props>{
         graphicType='icon'
         graphicName='list'
         title={`Sequence: ${this.sequence().name()}`}
-        subtitle='Step by step installation wizard'
+        subtitle='Step by step wizard'
       />
     )
   }

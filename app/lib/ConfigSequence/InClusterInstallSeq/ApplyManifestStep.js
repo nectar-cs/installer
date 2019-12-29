@@ -5,11 +5,8 @@ import { constants, defaults } from './defaults';
 export default class ApplyManifestStep extends ConfigStep {
 
   produceCommand(): Array<string> {
-    let root = require('electron').remote.app.getAppPath();
-    root = root.replace("installer/app", "installer");
-    return [
-      `kubectl apply -f ${root}/manifest.yaml`
-    ]
+    const { yamlUrl } = this.config();
+    return [`kubectl apply -f ${yamlUrl}`];
   }
 
   async performVerifications() {
