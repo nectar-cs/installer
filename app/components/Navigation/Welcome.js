@@ -8,6 +8,7 @@ export default class Welcome extends React.Component<>{
 
   render() {
     const image = Utils.image('nectar_mark_light.png');
+    const version = process.env.REACT_APP_VERSION;
 
     return(
       <Layout.ThemePage>
@@ -18,7 +19,7 @@ export default class Welcome extends React.Component<>{
           </S.TitleBox>
           <S.Options>
             <Text.P2 emotion='contrastFont' center>
-              Installation & Configuration Wizard
+              Installation & Configuration Wizard {version}
             </Text.P2>
           </S.Options>
           <Button.SpicyButton>
