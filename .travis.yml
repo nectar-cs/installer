@@ -1,16 +1,13 @@
+dist: xenial
+
+deploy:
+  provider: snap
+  snap: release/nectar_*.snap
+  channel: stable
+  skip_cleanup: true
+
 matrix:
   include:
-    - os: windows
-      language: node_js
-      node_js:
-        - node
-    - os: osx
-      language: node_js
-      node_js:
-        - node
-      env:
-        - ELECTRON_CACHE=$HOME/.cache/electron
-        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
     - os: linux
       language: node_js
       node_js:
@@ -69,5 +66,5 @@ before_script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sleep 3; fi
 
 script:
-  - yarn package-ci
-  - yarn build-e2e
+  - yarn build --linux snap
+

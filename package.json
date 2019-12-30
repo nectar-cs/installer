@@ -82,9 +82,14 @@
         "msi"
       ]
     },
+    "mac": {
+      "target": [
+        "snap"
+      ]
+    },
     "linux": {
       "target": [
-        "deb"
+        "snap"
       ],
       "category": "Development"
     },
