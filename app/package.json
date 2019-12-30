@@ -1,7 +1,7 @@
 {
-  "name": "nectar-mosaic-installer",
-  "productName": "MOSAIC Installer",
-  "version": "1.0.1",
+  "name": "nectar-mosaic-manager",
+  "productName": "MOSAIC Manager",
+  "version": "1.0.2",
   "description": "MOSAIC Instance Manager",
   "main": "./main.prod.js",
   "author": {
