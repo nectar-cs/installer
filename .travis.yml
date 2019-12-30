@@ -1,31 +1,35 @@
 matrix:
   include:
-    - os: osx
+    - os: windows
       language: node_js
       node_js:
         - node
-      env:
-        - ELECTRON_CACHE=$HOME/.cache/electron
-        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
-    - os: linux
-      language: node_js
-      node_js:
-        - node
-      services:
-        - xvfb
-      addons:
-        apt:
-          sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
-          packages:
-            - gcc-multilib
-            - g++-8
-            - g++-multilib
-            - icnsutils
-            - graphicsmagick
-            - xz-utils
-            - xorriso
-            - rpm
+#    - os: osx
+#      language: node_js
+#      node_js:
+#        - node
+#      env:
+#        - ELECTRON_CACHE=$HOME/.cache/electron
+#        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+#    - os: linux
+#      language: node_js
+#      node_js:
+#        - node
+#      services:
+#        - xvfb
+#      addons:
+#        apt:
+#          sources:
+#            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+#          packages:
+#            - gcc-multilib
+#            - g++-8
+#            - g++-multilib
+#            - icnsutils
+#            - graphicsmagick
+#            - xz-utils
+#            - xorriso
+#            - rpm
 
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
