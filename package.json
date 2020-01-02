@@ -1,7 +1,7 @@
 {
   "name": "nectar-mosaic-manager",
   "productName": "MOSAIC Manager",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "MOSAIC Instance Manager",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -82,16 +82,11 @@
         "msi"
       ]
     },
-    "mac": {
-      "target": [
-        "snap"
-      ]
-    },
     "linux": {
       "target": [
-        "snap"
-      ],
-      "category": "Development"
+        "snap",
+        "deb"
+      ]
     },
     "directories": {
       "buildResources": "resources",

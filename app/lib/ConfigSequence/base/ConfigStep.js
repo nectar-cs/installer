@@ -110,11 +110,11 @@ export default class ConfigStep {
   }
 
   async execute(cmd) {
-    return await executeCommand(cmd);
+    return await Utils.shellExec(cmd);
   }
 
   async jExecute(cmd, parseAnyway=false) {
-    const { output, success } = await executeCommand(cmd);
+    const { output, success } = await Utils.shellExec(cmd);
     if(success || parseAnyway) {
       const parsed = JSON.parse(output);
       const parsedList = parsed['items'];
@@ -173,16 +173,6 @@ export default class ConfigStep {
   key() { return null; }
   defaults() { return null }
   store() { return null }
-}
-
-async function executeCommand(cmd){
-  return new Promise(resolve => {
-    exec(cmd, (err, stdout, stderr) => {
-      const success = !err;
-      const output = success ? stdout : (stderr || 'internal error');
-      resolve({success, output});
-    });
-  });
 }
 
 type ExecResult = {

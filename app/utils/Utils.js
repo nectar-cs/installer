@@ -1,9 +1,23 @@
 import React from 'react';
+import { exec } from "child_process";
 
 const GCP_BASE = 'https://storage.googleapis.com/';
 const IMG_BASE = GCP_BASE + 'nectar-mosaic-public/images';
 
 export default class Utils {
+
+  static async shellExec(cmd){
+    return new Promise(resolve => {
+      exec(cmd, (err, stdout, stderr) => {
+        const success = !err;
+        console.log("ERR was");
+        console.log(err);
+        console.log(stderr);
+        const output = success ? stdout : (stderr || 'internal error');
+        resolve({success, output});
+      });
+    });
+  }
 
   static arrayOfHashesOptions(options){
     return options.map(option => (

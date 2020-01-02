@@ -6,7 +6,7 @@ deploy:
   channel: stable
   skip_cleanup: true
 
-matrix:
+jobs:
   include:
     - os: linux
       language: node_js
@@ -67,4 +67,3 @@ before_script:
 
 script:
   - yarn build --linux snap
-
