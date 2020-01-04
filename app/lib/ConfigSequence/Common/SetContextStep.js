@@ -5,9 +5,26 @@ import Utils from '../../../utils/Utils';
 
 export default class SetContextStep extends ConfigStep{
 
+  async generateInitialBundle(): {string: string}{
+    const kConfig = await this.jExecute(this.jKmd("config view"));
+    if(kConfig && kConfig.contexts){
+
+      const available = kConfig.contexts.map(c => c.name);
+      let current = kConfig['current-context'] || available[0];
+      this.kConfig = kConfig;
+      return {
+        [this.keyContext()]: current
+      }
+    } else {
+      return { [this.keyContext()]: '' };
+    }
+  }
+
   produceCommand(): Array<string> {
     const context = this.bundle[this.keyContext()];
-    return [`kubectl config use-context ${context}`];
+    return [
+      this.kmd(`config use-context ${context}`)
+    ];
   }
 
   validate(): Array<string> {
@@ -23,21 +40,6 @@ export default class SetContextStep extends ConfigStep{
 
     return {
       contextChanged: actual === expected
-    }
-  }
-
-  async generateInitialBundle(): {string: string}{
-    const kConfig = await this.jExecute(this.jKmd("config view"));
-    if(kConfig && kConfig.contexts){
-
-      const available = kConfig.contexts.map(c => c.name);
-      let current = kConfig['current-context'] || available[0];
-      this.kConfig = kConfig;
-      return {
-        [this.keyContext()]: current
-      }
-    } else {
-      return { [this.keyContext()]: '' };
     }
   }
 

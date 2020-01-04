@@ -6,19 +6,23 @@ export default class ApplyManifestStep extends ConfigStep {
 
   produceCommand(): Array<string> {
     const { yamlUrl } = this.config();
-    return [`kubectl apply -f ${yamlUrl}`];
+    return [
+      this.kmd(`apply -f ${yamlUrl}`)
+    ];
   }
 
   async performVerifications() {
     const { crName, crbName } = this.config();
+    const { pvcCount, depCount, svcCount } = this.config();
+
     return {
       nsExists: (await this.verifyResPres("ns", "nectar")),
       saExists: (await this.verifyResPres("sa", "nectar")),
       rbExists: (await this.verifyResPres("clusterrole", crName)),
       crbExists: (await this.verifyResPres("clusterrolebinding", crbName)),
-      depsExist: (await this.verifyResCount("deploy", 5)),
-      svcsExist: (await this.verifyResCount("svc", 5)),
-      pvcExists: (await this.verifyResCount("pvc", 1))
+      depsExist: (await this.verifyResCount("deploy", depCount)),
+      svcsExist: (await this.verifyResCount("svc", svcCount)),
+      pvcExists: (await this.verifyResCount("pvc", pvcCount))
     };
   }
 

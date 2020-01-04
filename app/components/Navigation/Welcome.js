@@ -17,11 +17,7 @@ export default class Welcome extends React.Component<Props, State>{
   }
 
   async componentDidMount(): void {
-    const { success, output } = await Utils.shellExec("kubectl");
-    console.log("RES");
-    console.log(success);
-    console.log(output);
-    console.log(!!success && !!output);
+    const { success, output } = await Utils.shellExec("echo $(kubectl)");
     const phase = !!success && !!output ? 'passed' : 'failed';
     this.setState(s => ({...s, phase}));
   }

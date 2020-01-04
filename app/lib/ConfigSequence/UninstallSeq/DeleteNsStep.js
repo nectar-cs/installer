@@ -13,8 +13,6 @@ export default class DeleteNsStep extends ConfigStep {
   async performVerifications() {
     return {
       nsGone: (await this.verifyResCount("deploy", 0)),
-      depsGone: (await this.verifyResCount("svc", 0)),
-      svcsGone: (await this.verifyResCount("pvc", 0)),
       saGone: (await this.verifyResCount("sa", 0)),
     };
   }

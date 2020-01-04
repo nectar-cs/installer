@@ -1,5 +1,4 @@
 //@flow
-import { exec } from 'child_process';
 import ConfigOption from './ConfigOption';
 import Utils from '../../../utils/Utils';
 
@@ -52,6 +51,8 @@ export default class ConfigStep {
 
   didVerificationSucceed(){
     const booleans = Object.values(this.verifications);
+    console.log("FALSES");
+    console.log(this.verifications);
     return !booleans.includes(false);
   }
 
@@ -80,17 +81,17 @@ export default class ConfigStep {
     return [];
   }
 
+  kmd(cmd, ns): string {
+    const nsPart = (ns && ` -n ${ns}`) || '';
+    return `echo $(kubectl ${cmd}${nsPart} 2>&1)`;
+  }
+
   jKmd(cmd, ns): string {
     return this.kmd(`${cmd} -o json`, ns);
   }
 
   secretLiteral(key): string {
     return `--from-literal=${key}=${this.bundle[key]}`;
-  }
-
-  kmd(cmd, ns): string {
-    const nsPart = (ns && `-n ${ns}`) || '';
-    return `kubectl ${cmd} ${nsPart}`;
   }
 
   name(): string {
@@ -114,11 +115,18 @@ export default class ConfigStep {
   }
 
   async jExecute(cmd, parseAnyway=false) {
-    const { output, success } = await Utils.shellExec(cmd);
+    let { output, success } = await Utils.shellExec(cmd);
     if(success || parseAnyway) {
-      const parsed = JSON.parse(output);
-      const parsedList = parsed['items'];
-      return parsedList != null ? parsedList : parsed;
+      try{
+        output = output.replace(/\s{2,}/g, ' ');
+        output = output.replace(/\t/g, ' ');
+        output = output.toString().trim().replace(/(\r\n|\n|\r)/g,"");
+        const parsed = JSON.parse(output);
+        const parsedList = parsed['items'];
+        return parsedList != null ? parsedList : parsed;
+      }catch(e){
+        return null;
+      }
     }
     return null;
   }
@@ -137,24 +145,27 @@ export default class ConfigStep {
 
   async verifySecretExists(){
     const cmd = this.jKmd("get secret", "nectar");
-    const secrets = (await this.jExecute(cmd)) || [];
-    return !!secrets.find(s => s.metadata.name === this.config().secretName);
+    const secrets = await this.jExecute(cmd);
+    return !!(secrets || []).find(s =>
+      s.metadata.name === this.config().secretName
+    );
   }
 
   async verifySecret(field){
     const cmd = this.jKmd(`get secret ${this.config().secretName}`, "nectar");
-    const secret = (await this.jExecute(cmd)) || {};
-    return Utils.tor(_ => !!(secret['data'][field]));
+    const secret = await this.jExecute(cmd);
+    return Utils.tor(_ => !!((secret || {})['data'][field]));
   }
 
   async verifyResCount(resName, count){
-    const res = await this.jExecute(this.jKmd(`get ${resName}`, "nectar"));
-    return res.length === count;
+    const cmd = this.jKmd(`get ${resName}`, "nectar");
+    const res = await this.jExecute(cmd);
+    return (res || []).length === count;
   }
 
   async verifyResPres(resName, exp, ns='nectar'){
     const cmd = this.jKmd(`get ${resName}`, ns);
-    const resList = await this.jExecute(cmd);
+    const resList = (await this.jExecute(cmd)) || [];
     return !!resList.find(r => r.metadata.name === exp);
   }
 

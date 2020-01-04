@@ -2,7 +2,10 @@ export const constants = {
   applyManifest: {
     crName: "nectar-cluster-wide-role",
     crbName: "nectar-permissions",
-    yamlUrl: "https://raw.githubusercontent.com/nectar-cs/mosaic/master/manifest.yaml"
+    yamlUrl: "https://raw.githubusercontent.com/nectar-cs/mosaic/master/manifest.yaml",
+    depCount: 3,
+    svcCount: 3,
+    pvcCount: 0
   },
   pgSecrets: {
     secretName: "mosaic-pg",
@@ -42,8 +45,9 @@ export const defaults = {
       saExists: "ServiceAccount nectar exists",
       rbExists: `ClusterRole ${am.crName} exists`,
       crbExists: `ClusterRoleBinding ${am.crbName} exists`,
-      depsExist: `5/5 deployments in nectar namespace exist`,
-      svcsExist: `5/5 services in nectar namespace exist`
+      pvcExists: `${am.pvcCount}/${am.pvcCount} PersistentVolumeClaims exist`,
+      depsExist: `${am.depCount}/${am.depCount} deployments in nectar namespace exist`,
+      svcsExist: `${am.svcCount}/${am.svcCount} services in nectar namespace exist`
     }
   },
 

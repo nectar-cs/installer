@@ -10,9 +10,6 @@ export default class Utils {
     return new Promise(resolve => {
       exec(cmd, (err, stdout, stderr) => {
         const success = !err;
-        console.log("ERR was");
-        console.log(err);
-        console.log(stderr);
         const output = success ? stdout : (stderr || 'internal error');
         resolve({success, output});
       });
@@ -45,7 +42,7 @@ export default class Utils {
 
   static tor(op, def=null){
     try{
-      return op
+      return op();
     }
     catch (e) {
       return def;
