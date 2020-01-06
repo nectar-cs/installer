@@ -5,9 +5,11 @@ import { constants, defaults } from './defaults';
 export default class ApplyManifestStep extends ConfigStep {
 
   produceCommand(): Array<string> {
-    const { yamlUrl } = this.config();
+    const { yamlUrl, yamlPath } = this.config();
+    const isDev = process.env.NODE_ENV === 'development';
+    const file = isDev ? yamlPath : yamlUrl;
     return [
-      this.kmd(`apply -f ${yamlUrl}`)
+      this.kmd(`apply -f ${file}`)
     ];
   }
 

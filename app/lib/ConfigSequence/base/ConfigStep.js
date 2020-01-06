@@ -5,9 +5,10 @@ import Utils from '../../../utils/Utils';
 
 export default class ConfigStep {
   constructor() {
-    const { name, summary } = this.config();
+    const { name, summary, skips } = this.config();
     this._name = name;
     this._summary = summary;
+    this._executes = !skips;
     this.context = null;
     this.bundle = {};
     this._runResult = null;
@@ -51,8 +52,6 @@ export default class ConfigStep {
 
   didVerificationSucceed(){
     const booleans = Object.values(this.verifications);
-    console.log("FALSES");
-    console.log(this.verifications);
     return !booleans.includes(false);
   }
 
@@ -67,7 +66,7 @@ export default class ConfigStep {
   }
 
   verificationConstants(){
-    const dictForm = this.config().verifications;
+    const dictForm = this.config().verifications || {};
     return Object.keys(dictForm).map(key => (
       { key: key, name: dictForm[key] }
     ));
@@ -128,7 +127,7 @@ export default class ConfigStep {
         return null;
       }
     }
-    return null;
+    else return null;
   }
 
   async run(): ExecResult {
@@ -176,11 +175,12 @@ export default class ConfigStep {
 
   config() {
     return {
-      ...this.defaults()[this.key()],
-      ...this.store()[this.key()],
+      ...(this.defaults()[this.key()] || {}),
+      ...(this.store()[this.key()] || {}),
     }
   }
 
+  executes() { return this._executes; }
   key() { return null; }
   defaults() { return null }
   store() { return null }

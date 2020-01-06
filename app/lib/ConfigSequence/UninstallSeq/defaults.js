@@ -15,9 +15,7 @@ export const defaults = {
       "This can take up to a minute."
     ],
     verifications: {
-      nsGone: "Namespace nectar gone",
-      depsGone: "No deployments remaining",
-      svcsGone: "No services remaining",
+      nsGone: "nectar namespace and contents gone",
       saGone: "ServiceAccount gone",
     }
   },

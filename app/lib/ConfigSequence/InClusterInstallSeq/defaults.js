@@ -3,9 +3,10 @@ export const constants = {
     crName: "nectar-cluster-wide-role",
     crbName: "nectar-permissions",
     yamlUrl: "https://raw.githubusercontent.com/nectar-cs/mosaic/master/manifest.yaml",
-    depCount: 3,
-    svcCount: 3,
-    pvcCount: 0
+    yamlPath: "$HOME/workspace/mosaic/installer/manifest.yaml",
+    depCount: 5,
+    svcCount: 5,
+    pvcCount: 1
   },
   pgSecrets: {
     secretName: "mosaic-pg",
@@ -16,6 +17,14 @@ export const constants = {
     secretName: "mosaic-backend",
     keyAttrEnc: "attr-encrypt-key",
     keySecBase: "secret-key-base"
+  },
+  tryIt: {
+    skips: true,
+    commands: [
+      'kubectl port-forward svc/frontend 9000:80 -n nectar',
+      'kubectl port-forward svc/backend 3000:80 -n nectar',
+      'kubectl port-forward svc/kapi 5000:80 -n nectar'
+    ]
   }
 };
 
@@ -77,5 +86,14 @@ export const defaults = {
       attrEncPresent: `Secret field ${bk.secretName}.${bk.keyAttrEnc} non-empty`,
       secBasePresent: `Secret field ${bk.secretName}.${bk.keySecBase} non-empty`
     }
+  },
+
+  tryIt: {
+    name: "Test the Installation",
+    summary: [
+      "Run MOSAIC in your web browser.",
+      "Copy the commands below in separate terminals.",
+      "Then open a browser window at localhost:9000."
+    ]
   }
 };

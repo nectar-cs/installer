@@ -94,7 +94,7 @@ spec:
       serviceAccountName: nectar
       containers:
         - name: main
-          image: xnectar/kapi:latest
+          image: xnectar/kapi:dev
           imagePullPolicy: 'Always'
           ports:
             - containerPort: 5000
@@ -226,7 +226,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: xnectar/frontend:latest
+          image: xnectar/frontend:dev
           imagePullPolicy: 'Always'
 
 
@@ -315,12 +315,12 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: mosaic
+                  name: mosaic-pg
                   key: db-user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mosaic
+                  name: mosaic-pg
                   key: db-password
             - name: POSTGRES_DB
               value: mosaic-postgres
@@ -378,9 +378,9 @@ spec:
     spec:
       containers:
         - name: main
-          image: xnectar/backend:latest
+          image: xnectar/backend:dev
           imagePullPolicy: 'Always'
-          args: ["rake db:create && rake db:migrate && rails server"]
+          args: ["rake db:create && rake db:migrate && rails server -p 3000"]
           env:
           - name: DATABASE_URL
             value: "postgres"
@@ -391,12 +391,12 @@ spec:
           - name: DATABASE_USER
             valueFrom:
               secretKeyRef:
-                name: "mosaic"
+                name: "mosaic-pg"
                 key: "db-user"
           - name: DATABASE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: "mosaic"
+                name: "mosaic-pg"
                 key: "db-password"
           - name: RAILS_ENV
             value: "production"
@@ -405,12 +405,12 @@ spec:
           - name: SECRET_KEY_BASE
             valueFrom:
               secretKeyRef:
-                name: "mosaic"
+                name: "mosaic-backend"
                 key: "secret-key-base"
           - name: ATTR_ENCRYPT_KEY
             valueFrom:
               secretKeyRef:
-                name: "mosaic"
+                name: "mosaic-backend"
                 key: "attr-encrypt-key"
 
 
@@ -429,6 +429,7 @@ spec:
   type: ClusterIP
   selector:
     app: backend
+    tier: server
   ports:
     - protocol: TCP
       port: 3000

@@ -170,24 +170,32 @@ export default class StepDetail extends React.Component<Props, State> {
 
   buttonText(){
     const { isLast } = this.props;
-    if(this.wasRun()){
-      if(this.didPass()) {
-        return isLast ? "Finish" : "Next";
-      } else return "Try Again";
+    if(this.step().executes()){
+      if(this.wasRun()){
+        if(this.didPass()) {
+          return isLast ? "Finish" : "Next";
+        } else return "Try Again";
+      } else {
+        if(this.isRunning() || this.isVerifying())
+          return "Running";
+        else return this.isValidated() ? "Run" : "Fix Problems";
+      }
     } else {
-      if(this.isRunning() || this.isVerifying())
-        return "Running";
-      else return this.isValidated() ? "Run" : "Fix Problems";
+      return isLast ? "Finish" : "Next";
     }
   }
 
   buttonAction(){
     const { nextCallback, isLast } = this.props;
-    if(this.wasRun()){
-      if(this.didPass()) {
-        return isLast ? this.initiateRedirect : nextCallback;
+    if(this.step().executes()){
+      if(this.wasRun()){
+        if(this.didPass()) {
+          return isLast ? this.initiateRedirect : nextCallback;
+        } else return this.runStep;
       } else return this.runStep;
-    } else return this.runStep;
+    } else {
+      return isLast ? this.initiateRedirect : nextCallback;
+    }
   }
 
   renderButton(){

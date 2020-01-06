@@ -28,11 +28,19 @@ export default class MenuBuilder {
   }
 
   setupDevelopmentEnvironment() {
-    const isDev = process.env.NODE_ENV === 'development';
-    const isProdDebug = process.env.DEBUG_PROD === 'true';
-    const shouldShow = isDev || isProdDebug;
-    if(!shouldShow) return;
     this.mainWindow.openDevTools();
+    this.mainWindow.webContents.on('context-menu', (e, props) => {
+      const { x, y } = props;
+
+      Menu.buildFromTemplate([
+        {
+          label: 'Inspect element',
+          click: () => {
+            this.mainWindow.inspectElement(x, y);
+          }
+        }
+      ]).popup(this.mainWindow);
+    });
   }
 
   buildDarwinTemplate() {
@@ -84,6 +92,19 @@ export default class MenuBuilder {
       ]
     };
 
+    const subMenuWindow = {
+      label: 'Window',
+      submenu: [
+        {
+          label: 'Minimize',
+          accelerator: 'Command+M',
+          selector: 'performMiniaturize:'
+        },
+        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
+        { type: 'separator' },
+        { label: 'Bring All to Front', selector: 'arrangeInFront:' }
+      ]
+    };
     const subMenuHelp = {
       label: 'Help',
       submenu: [
@@ -115,7 +136,8 @@ export default class MenuBuilder {
         }
       ]
     };
-    return [subMenuAbout, subMenuEdit, subMenuHelp];
+
+    return [subMenuAbout, subMenuEdit, subMenuWindow, subMenuHelp];
   }
 
   buildDefaultTemplate() {
